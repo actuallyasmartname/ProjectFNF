@@ -1,0 +1,64 @@
+name: ci
+on: [pull_request, push]
+jobs:
+  build:
+   strategy:
+    matrix:
+     include:
+         - name: HTML5
+           os: ubuntu-latest
+           platform: html5
+           build_type: debug
+         - name: Ubuntu
+           os: ubuntu-latest
+           platform: linux
+           build_type: debug
+         - name: macOS
+           os: macos-latest
+           platform: macos
+           build_type: debug
+         - name: Windows
+           os: windows-latest
+           platform: windows
+           build_type: debug
+    name: Build for ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v2
+      - name: Cache
+        uses: actions/cache@v2.1.4
+        with:
+          path: |
+            ./export/${{ matrix.build_type }}/${{ matrix.platform }}/haxe
+            ./export/${{ matrix.build_type }}/${{ matrix.platform }}/obj
+            ~/.hxccp_config.xml
+            ~/.lime
+            ~/.haxelib
+          key: ${{ matrix.name }}-funkinCache-${{ hashFiles('./Project.xml') }}
+      - name: Install & Setup Haxe
+        uses: krdlab/setup-haxe@v1.1.5
+        with:
+          haxe-version: 4.2.1
+      - name: Install extensions
+        run: |
+           haxelib install lime
+           haxelib install openfl
+           haxelib install flixel
+           haxelib install flixel-addons
+           haxelib install flixel-ui
+           haxelib install flixel-tools
+           haxelib install hscript
+           haxelib install newgrounds
+           haxelib git polymod https://github.com/larsiusprime/polymod.git
+           haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
+     - name: Setup lime command
+       run: haxelib run lime setup
+     - name: build
+       run: haxelib run lime build ${{ matrix.platform }} -${{ matrix.build_type }}
+     - name: Upload Artifact
+        uses: actions/upload-artifact@v2.2.2
+        with:
+          name: |
+            ProjectFNF for ${{ matrix.name }}
+          path: export/${{ matrix.build_type }}/${{ matrix.platform }}/bin
