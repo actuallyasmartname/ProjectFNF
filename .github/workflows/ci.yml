@@ -52,11 +52,11 @@ jobs:
            haxelib install newgrounds
            haxelib git polymod https://github.com/larsiusprime/polymod.git
            haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
-     - name: Setup lime command
-       run: haxelib run lime setup
-     - name: build
-       run: haxelib run lime build ${{ matrix.platform }} -${{ matrix.build_type }}
-     - name: Upload Artifact
+      - name: Setup lime command
+        run: haxelib run lime setup
+      - name: build
+        run: haxelib run lime build ${{ matrix.platform }} -${{ matrix.build_type }}
+      - name: Upload Artifact
         uses: actions/upload-artifact@v2.2.2
         with:
           name: |
