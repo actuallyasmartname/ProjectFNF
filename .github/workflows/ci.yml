@@ -1,7 +1,7 @@
 name: ci
 on: [pull_request, push]
 jobs:
-  build:
+ build:
    strategy:
     matrix:
      include:
@@ -21,9 +21,9 @@ jobs:
            os: windows-latest
            platform: windows
            build_type: debug
-    name: Build for ${{ matrix.name }}
-    runs-on: ${{ matrix.os }}
-    steps:
+   name: Build for ${{ matrix.name }}
+   runs-on: ${{ matrix.os }}
+   steps:
       - name: checkout repo
         uses: actions/checkout@v2
       - name: Cache
